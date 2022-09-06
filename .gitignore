@@ -58,3 +58,28 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+GameAndWars/Packages/manifest.json
+GameAndWars/Packages/packages-lock.json
+GameAndWars/ProjectSettings/AudioManager.asset
+GameAndWars/ProjectSettings/ClusterInputManager.asset
+GameAndWars/ProjectSettings/DynamicsManager.asset
+GameAndWars/ProjectSettings/EditorBuildSettings.asset
+GameAndWars/ProjectSettings/EditorSettings.asset
+GameAndWars/ProjectSettings/GraphicsSettings.asset
+GameAndWars/ProjectSettings/InputManager.asset
+GameAndWars/ProjectSettings/NavMeshAreas.asset
+GameAndWars/ProjectSettings/NetworkManager.asset
+GameAndWars/ProjectSettings/PackageManagerSettings.asset
+GameAndWars/ProjectSettings/Physics2DSettings.asset
+GameAndWars/ProjectSettings/PresetManager.asset
+GameAndWars/ProjectSettings/ProjectSettings.asset
+GameAndWars/ProjectSettings/ProjectVersion.txt
+GameAndWars/ProjectSettings/QualitySettings.asset
+GameAndWars/ProjectSettings/TagManager.asset
+GameAndWars/ProjectSettings/TimeManager.asset
+GameAndWars/ProjectSettings/UnityConnectSettings.asset
+GameAndWars/ProjectSettings/VersionControlSettings.asset
+GameAndWars/ProjectSettings/VFXManager.asset
+GameAndWars/ProjectSettings/XRSettings.asset
+GameAndWars/UserSettings/EditorUserSettings.asset
+GameAndWars/.vsconfig
