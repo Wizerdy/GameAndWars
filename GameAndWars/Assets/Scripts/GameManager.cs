@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetAxis("Vertical") != 0)
         {
 
-            cooldownControl = 0.8f;
+            cooldownControl = 0.7f;
             positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
 
             switch (currentPosition)
