@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     private int grenadeMaxPosition = 0;
     private int reversePos = -1;
 
+    public float cooldownGrenadeLaunch = 5f;
+    public float nextGrenadeCooldown = 4.9f;
+
     //Controles
 
     private float cooldownControl = 0.7f;
@@ -45,35 +48,15 @@ public class GameManager : MonoBehaviour
     }
 
     private void Update()
-    { 
+    {
 
         //Grenade
-        if(Input.GetKeyDown(KeyCode.Space) && isLaunching == false)
+        cooldownGrenadeLaunch -= Time.deltaTime;
+        if(cooldownGrenadeLaunch <= 0)
         {
-            int random = Random.Range(0, 4);
-            switch(random)
-            {
-                case 0 :
-                    grenadePos = grenadeTopLeftPos;
-                    grenadeMaxPosition = grenadeTopLeftPos.Count;
-                break;
-                case 1 :
-                    grenadePos = grenadeTopRightPos;
-                    grenadeMaxPosition = grenadeTopRightPos.Count;
-                break;
-                case 2 :
-                    grenadePos = grenadeBottomLeftPos;
-                    grenadeMaxPosition = grenadeBottomLeftPos.Count;
-                break;
-                case 3 :
-                    grenadePos = grenadeBottomRightPos;
-                    grenadeMaxPosition = grenadeBottomRightPos.Count;
-                break;
-            }
-            reversePos = random;
-            isLaunching = true;
-            cooldownGrenade = 0.7f;
-            grenadePos[grenadePosition].GetComponent<Animator>().Play("Activating");
+            SendGrenade();
+            cooldownGrenadeLaunch = nextGrenadeCooldown;
+            if (nextGrenadeCooldown > 0.8f) nextGrenadeCooldown -= 0.1f;
         }
 
         if(isLaunching == true)
@@ -125,34 +108,40 @@ public class GameManager : MonoBehaviour
 
         }
 
-        if (Input.GetAxis("Vertical") != 0)
+        if (Input.GetAxis("Vertical") > 0)
         {
 
-            cooldownControl = 0.7f;
-            positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
-
-            switch (currentPosition)
-            {
-                case 0:
-                    currentPosition = 2;
-                    break;
-
-                case 1:
-                    currentPosition = 3;
-                    break;
-
-                case 2:
-                    currentPosition = 0;
-                    break;
-
-                case 3:
-                    currentPosition = 1;
-                    break;
-            }
-
-            positions[currentPosition].GetComponent<Animator>().Play("Activating");
+            StartCoroutine(Jump());
 
         }
+    }
+
+    public void SendGrenade()
+    {
+        int random = Random.Range(0, 4);
+        switch (random)
+        {
+            case 0:
+                grenadePos = grenadeTopLeftPos;
+                grenadeMaxPosition = grenadeTopLeftPos.Count;
+                break;
+            case 1:
+                grenadePos = grenadeTopRightPos;
+                grenadeMaxPosition = grenadeTopRightPos.Count;
+                break;
+            case 2:
+                grenadePos = grenadeBottomLeftPos;
+                grenadeMaxPosition = grenadeBottomLeftPos.Count;
+                break;
+            case 3:
+                grenadePos = grenadeBottomRightPos;
+                grenadeMaxPosition = grenadeBottomRightPos.Count;
+                break;
+        }
+        reversePos = random;
+        isLaunching = true;
+        cooldownGrenade = 0.7f;
+        grenadePos[grenadePosition].GetComponent<Animator>().Play("Activating");
     }
 
     private void CheckGrenade(bool reverse)
@@ -204,6 +193,34 @@ public class GameManager : MonoBehaviour
                 isLaunching = false;
                 isReverse = false;
             }
+        }
+    }
+
+    private IEnumerator Jump()
+    {
+        cooldownControl = 0.7f;
+
+        switch (currentPosition)
+        {
+            case 2:
+                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
+                currentPosition = 0;
+                positions[currentPosition].GetComponent<Animator>().Play("Activating");
+                yield return new WaitForSeconds(1);
+                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
+                currentPosition += 2;
+                positions[currentPosition].GetComponent<Animator>().Play("Activating");
+                break;
+
+            case 3:
+                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
+                currentPosition = 1;
+                positions[currentPosition].GetComponent<Animator>().Play("Activating");
+                yield return new WaitForSeconds(1);
+                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
+                currentPosition += 2;
+                positions[currentPosition].GetComponent<Animator>().Play("Activating");
+                break;
         }
     }
 
