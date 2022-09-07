@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     private List<GameObject> grenadePos;
     public int currentPosition = 2;
     private int grenadePosition = 0;
+    private int grenadeMaxPosition = 0;
     private int reversePos = -1;
 
     //Controles
@@ -34,8 +35,12 @@ public class GameManager : MonoBehaviour
         {
             grenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
             grenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
-            grenadeBottomLeftPos[i].GetComponent<Animator>().Play("Deactivating");
-            grenadeBottomRightPos[i].GetComponent<Animator>().Play("Deactivating");
+        }
+
+        for(int j = 0; j < grenadeBottomLeftPos.Count; j++)
+        {
+            grenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
+            grenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
         }
     }
 
@@ -50,15 +55,19 @@ public class GameManager : MonoBehaviour
             {
                 case 0 :
                     grenadePos = grenadeTopLeftPos;
+                    grenadeMaxPosition = grenadeTopLeftPos.Count;
                 break;
                 case 1 :
                     grenadePos = grenadeTopRightPos;
+                    grenadeMaxPosition = grenadeTopRightPos.Count;
                 break;
                 case 2 :
                     grenadePos = grenadeBottomLeftPos;
+                    grenadeMaxPosition = grenadeBottomLeftPos.Count;
                 break;
                 case 3 :
                     grenadePos = grenadeBottomRightPos;
+                    grenadeMaxPosition = grenadeBottomRightPos.Count;
                 break;
             }
             reversePos = random;
@@ -150,7 +159,7 @@ public class GameManager : MonoBehaviour
     {
         if(reverse == false)
         {
-            if(grenadePosition < grenadeTopLeftPos.Count - 1)
+            if(grenadePosition < grenadeMaxPosition - 1)
             {
                 grenadePos[grenadePosition].GetComponent<Animator>().Play("Deactivating");
                 grenadePosition += 1;
@@ -161,7 +170,8 @@ public class GameManager : MonoBehaviour
             {
                 if(reversePos == currentPosition)
                 {
-                    grenadePosition = grenadeTopLeftPos.Count - 1;
+                    if(currentPosition == 0 || currentPosition == 1) grenadePosition = grenadeTopLeftPos.Count - 1;
+                    else if( currentPosition == 2 || currentPosition == 3) grenadePosition = grenadeBottomLeftPos.Count - 1;
                     isReverse = true;
                     Debug.Log("REVERSE");
                     CheckGrenade(true);
