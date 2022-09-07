@@ -109,41 +109,28 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if(Input.GetAxis("Horizontal") != 0)
+        if (Input.GetKey(KeyCode.UpArrow))
         {
-
+            SetPosition(0);
             cooldownControl = 0.7f;
-            positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
-
-            switch (currentPosition)
-            {
-                case 0:
-                    currentPosition = 1;
-                    break;
-
-                case 1:
-                    currentPosition = 0;
-                    break;
-
-                case 2:
-                    currentPosition = 3;
-                    break;
-
-                case 3:
-                    currentPosition = 2;
-                    break;
-            }
-
-            positions[currentPosition].GetComponent<Animator>().Play("Activating");
             return;
-
-        }
-
-        if (Input.GetAxis("Vertical") > 0)
+        } else if (Input.GetKey(KeyCode.LeftArrow))
         {
-
-            StartCoroutine(Jump());
-
+            SetPosition(2);
+            cooldownControl = 0.7f;
+            return;
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            SetPosition(3);
+            cooldownControl = 0.7f;
+            return;
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            SetPosition(1);
+            cooldownControl = 0.7f;
+            return;
         }
     }
 
@@ -238,7 +225,7 @@ public class GameManager : MonoBehaviour
             {
                 localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
                 Debug.Log("BOUM");
-                //grenadePosition[position] = 0;
+                grenadePosition[position] = 0;
                 cooldownGrenade[position] = 0.7f;
                 isLaunching[position] = false;
             }
@@ -278,32 +265,11 @@ public class GameManager : MonoBehaviour
         reverseCooldownGrenade[position] = 0.5f;
     }
 
-    private IEnumerator Jump()
+    public void SetPosition(int position)
     {
-        cooldownControl = 0.7f;
-
-        switch (currentPosition)
-        {
-            case 2:
-                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
-                currentPosition = 0;
-                positions[currentPosition].GetComponent<Animator>().Play("Activating");
-                yield return new WaitForSeconds(1);
-                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
-                currentPosition += 2;
-                positions[currentPosition].GetComponent<Animator>().Play("Activating");
-                break;
-
-            case 3:
-                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
-                currentPosition = 1;
-                positions[currentPosition].GetComponent<Animator>().Play("Activating");
-                yield return new WaitForSeconds(1);
-                positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
-                currentPosition += 2;
-                positions[currentPosition].GetComponent<Animator>().Play("Activating");
-                break;
-        }
+        positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
+        currentPosition = position;
+        positions[currentPosition].GetComponent<Animator>().Play("Activating");
     }
 
 }
