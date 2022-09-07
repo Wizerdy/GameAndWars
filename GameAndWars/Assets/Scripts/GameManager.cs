@@ -43,29 +43,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        foreach(GameObject position in positions)
-        {
-            if (positions.IndexOf(position) != currentPosition) position.GetComponent<Animator>().Play("Deactivating");
-        }
-
-        for(int i = 0; i < grenadeTopLeftPos.Count; i++)
-        {
-            grenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
-            grenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
-            
-            reverseGrenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
-            reverseGrenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
-        }
-
-        for(int j = 0; j < grenadeBottomLeftPos.Count; j++)
-        {
-            grenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
-            grenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
-
-            reverseGrenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
-            reverseGrenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
-        }
-
+        ResetGrenade();
     }
 
     private void Update()
@@ -289,6 +267,32 @@ public class GameManager : MonoBehaviour
         reverseCooldownGrenade[position] = 0.5f;
     }
 
+    private void ResetGrenade()
+    {
+        foreach(GameObject position in positions)
+        {
+            if (positions.IndexOf(position) != currentPosition) position.GetComponent<Animator>().Play("Deactivating");
+        }
+
+        for(int i = 0; i < grenadeTopLeftPos.Count; i++)
+        {
+            grenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
+            grenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
+            
+            reverseGrenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
+            reverseGrenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
+        }
+
+        for(int j = 0; j < grenadeBottomLeftPos.Count; j++)
+        {
+            grenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
+            grenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
+
+            reverseGrenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
+            reverseGrenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
+        }
+    }
+
     public void SetPosition(int position)
     {
         positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
@@ -316,7 +320,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
         yield return new WaitForSecondsRealtime(3f);
         Time.timeScale = 1;
-
+        ResetGrenade();
         lifesAmount = 3;
         foreach(GameObject life in lifesObjects)
         {
