@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,12 @@ public class GameManager : MonoBehaviour
     public List<GameObject> reverseGrenadeTopRightPos;
     public List<GameObject> reverseGrenadeBottomLeftPos;
     public List<GameObject> reverseGrenadeBottomRightPos;
+
+    public List<GameObject> lifesObjects = new();
+    public int lifesAmount = 3;
+    public int score = 0;
+    public TextMeshProUGUI scoreText;
+
     public int currentPosition = 2;
     [SerializeField]private List<int> grenadePosition;
     [SerializeField]private List<int> reverseGrenadePosition;
@@ -31,6 +38,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]private List<bool> isReverse;
     [SerializeField]private List<bool> isLaunching;
+
+    public Color activeColor, deactiveColor;
 
     private void Start()
     {
@@ -198,7 +207,13 @@ public class GameManager : MonoBehaviour
             {
                 if(currentPosition == 0 || currentPosition == 1) reverseGrenadePosition[position] = reverseGrenadeTopLeftPos.Count - 1;
                 else if(currentPosition == 2 || currentPosition == 3) reverseGrenadePosition[position] = reverseGrenadeBottomLeftPos.Count - 1;
-                Debug.Log("REVERSE");
+                score += 1;
+                scoreText.text = "";
+                for (int i = 0; i <= (5 - (score.ToString().ToCharArray().Length)) * 3; i++)
+                {
+                    scoreText.text = scoreText.text + " ";
+                }
+                scoreText.text += score;
                 isReverse[position] = true;
                 isLaunching[position] = false;
                 cooldownGrenade[position] = 0.7f;
@@ -225,9 +240,18 @@ public class GameManager : MonoBehaviour
             {
                 localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
                 Debug.Log("BOUM");
+                StartCoroutine(ChangeOpacity(lifesObjects[lifesAmount - 1].GetComponent<SpriteRenderer>(), false));
+                lifesAmount--;
+
                 grenadePosition[position] = 0;
                 cooldownGrenade[position] = 0.7f;
                 isLaunching[position] = false;
+
+                if(lifesAmount == 0)
+                {
+                    StartCoroutine(Restart());
+                }
+
             }
         }
     }
@@ -270,6 +294,34 @@ public class GameManager : MonoBehaviour
         positions[currentPosition].GetComponent<Animator>().Play("Deactivating");
         currentPosition = position;
         positions[currentPosition].GetComponent<Animator>().Play("Activating");
+    }
+
+    public IEnumerator ChangeOpacity(SpriteRenderer spriteRenderer, bool isActive)
+    {
+        float percentage = 0f;
+        while (percentage <= 1f)
+        {
+            float delta = Time.deltaTime * 10f * (isActive ? 1 : -1);
+            percentage += delta;
+            percentage = Mathf.Clamp01(percentage);
+            spriteRenderer.color = Color.Lerp(deactiveColor, activeColor, percentage);
+
+            yield return null;
+        }
+            
+    }
+
+    public IEnumerator Restart()
+    {
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(3f);
+        Time.timeScale = 1;
+
+        lifesAmount = 3;
+        foreach(GameObject life in lifesObjects)
+        {
+            StartCoroutine(ChangeOpacity(life.GetComponent<SpriteRenderer>(), true));
+        }
     }
 
 }
