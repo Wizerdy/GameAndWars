@@ -9,12 +9,16 @@ public class GameManager : MonoBehaviour
     public List<GameObject> grenadeTopRightPos;
     public List<GameObject> grenadeBottomLeftPos;
     public List<GameObject> grenadeBottomRightPos;
-
-    private List<GameObject> grenadePos;
+    
+    public List<GameObject> reverseGrenadeTopLeftPos;
+    public List<GameObject> reverseGrenadeTopRightPos;
+    public List<GameObject> reverseGrenadeBottomLeftPos;
+    public List<GameObject> reverseGrenadeBottomRightPos;
     public int currentPosition = 2;
-    private int grenadePosition = 0;
-    private int grenadeMaxPosition = 0;
-    private int reversePos = -1;
+    [SerializeField]private List<int> grenadePosition;
+    [SerializeField]private List<int> reverseGrenadePosition;
+    private List<int> grenadeMaxPosition = new List<int>(4){4, 4, 3, 3};
+    private List<int> reversePos = new List<int>(4){0, 1, 2, 3};
 
     public float cooldownGrenadeLaunch = 5f;
     public float nextGrenadeCooldown = 4.9f;
@@ -22,10 +26,11 @@ public class GameManager : MonoBehaviour
     //Controles
 
     private float cooldownControl = 0.7f;
-    private float cooldownGrenade = 0.7f;
+    [SerializeField]private List<float> cooldownGrenade;
+    [SerializeField]private List<float> reverseCooldownGrenade = new List<float>(4);
 
-    private bool isLaunching = false;
-    private bool isReverse = false;
+    [SerializeField]private List<bool> isReverse;
+    [SerializeField]private List<bool> isLaunching;
 
     private void Start()
     {
@@ -38,13 +43,20 @@ public class GameManager : MonoBehaviour
         {
             grenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
             grenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
+            
+            reverseGrenadeTopLeftPos[i].GetComponent<Animator>().Play("Deactivating");
+            reverseGrenadeTopRightPos[i].GetComponent<Animator>().Play("Deactivating");
         }
 
         for(int j = 0; j < grenadeBottomLeftPos.Count; j++)
         {
             grenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
             grenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
+
+            reverseGrenadeBottomLeftPos[j].GetComponent<Animator>().Play("Deactivating");
+            reverseGrenadeBottomRightPos[j].GetComponent<Animator>().Play("Deactivating");
         }
+
     }
 
     private void Update()
@@ -59,18 +71,37 @@ public class GameManager : MonoBehaviour
             if (nextGrenadeCooldown > 0.8f) nextGrenadeCooldown -= 0.1f;
         }
 
-        if(isLaunching == true)
+        //cooldown grenade before check
+        for(int i = 0; i < isLaunching.Count; i++)
         {
-            if(cooldownGrenade > 0)
+            if(isLaunching[i] == true)
             {
-                cooldownGrenade -= Time.deltaTime;
-            }
-            else
-            {
-                if(isReverse == false) CheckGrenade(false);
-                else CheckGrenade(true);
+                if(cooldownGrenade[i] > 0)
+                {
+                    cooldownGrenade[i] -= Time.deltaTime;
+                }
+                else
+                {
+                    CheckGrenade(i);
+                }
             }
         }
+
+        for(int j = 0; j < isReverse.Count; j++)
+        {
+            if(isReverse[j] == true)
+            {
+                if(reverseCooldownGrenade[j] > 0)
+                {
+                    reverseCooldownGrenade[j] -= Time.deltaTime;
+                }
+                else
+                {
+                    ReverseGrenade(j);
+                }
+            }
+        }
+        
 
         if (cooldownControl > 0)
         {
@@ -119,81 +150,132 @@ public class GameManager : MonoBehaviour
     public void SendGrenade()
     {
         int random = Random.Range(0, 4);
-        switch (random)
+        List<GameObject> localGrenade = new List<GameObject>();
+        if(isLaunching[random] == false)
         {
-            case 0:
-                grenadePos = grenadeTopLeftPos;
-                grenadeMaxPosition = grenadeTopLeftPos.Count;
-                break;
-            case 1:
-                grenadePos = grenadeTopRightPos;
-                grenadeMaxPosition = grenadeTopRightPos.Count;
-                break;
-            case 2:
-                grenadePos = grenadeBottomLeftPos;
-                grenadeMaxPosition = grenadeBottomLeftPos.Count;
-                break;
-            case 3:
-                grenadePos = grenadeBottomRightPos;
-                grenadeMaxPosition = grenadeBottomRightPos.Count;
-                break;
-        }
-        reversePos = random;
-        isLaunching = true;
-        cooldownGrenade = 0.7f;
-        grenadePos[grenadePosition].GetComponent<Animator>().Play("Activating");
-    }
-
-    private void CheckGrenade(bool reverse)
-    {
-        if(reverse == false)
-        {
-            if(grenadePosition < grenadeMaxPosition - 1)
+            switch (random)
             {
-                grenadePos[grenadePosition].GetComponent<Animator>().Play("Deactivating");
-                grenadePosition += 1;
-                cooldownGrenade = 0.7f;
-                grenadePos[grenadePosition].GetComponent<Animator>().Play("Activating");
+                case 0:
+                    localGrenade = grenadeTopLeftPos;
+                    break;
+                case 1:
+                    localGrenade = grenadeTopRightPos;
+                    break;
+                case 2:
+                    localGrenade = grenadeBottomLeftPos;
+                    break;
+                case 3:
+                    localGrenade = grenadeBottomRightPos;
+                    break;
             }
-            else
-            {
-                if(reversePos == currentPosition)
-                {
-                    if(currentPosition == 0 || currentPosition == 1) grenadePosition = grenadeTopLeftPos.Count - 1;
-                    else if( currentPosition == 2 || currentPosition == 3) grenadePosition = grenadeBottomLeftPos.Count - 1;
-                    isReverse = true;
-                    Debug.Log("REVERSE");
-                    CheckGrenade(true);
-                }
-                else
-                {
-                    grenadePos[grenadePosition].GetComponent<Animator>().Play("Deactivating");
-                    Debug.Log("BOUM");
-                    isLaunching = false;
-                    grenadePosition = 0;
-                    cooldownGrenade = 0.7f;
-                }
-                reversePos = -1;
-            }
+            reversePos[random] = random;
+            cooldownGrenade[random] = 0.7f;
+            isLaunching[random] = true;
+            localGrenade[grenadePosition[random]].GetComponent<Animator>().Play("Activating");
         }
         else
         {
-            if(grenadePosition > 0)
+            SendGrenade();
+        }
+    }
+
+    private void CheckGrenade(int position)
+    {
+        List<GameObject> localGrenade = new List<GameObject>();
+        switch(position)
+        {
+            case 0:
+                localGrenade = grenadeTopLeftPos;
+            break;
+            case 1:
+                localGrenade = grenadeTopRightPos;
+            break;
+            case 2:
+                localGrenade = grenadeBottomLeftPos;
+            break;
+            case 3:
+                localGrenade = grenadeBottomRightPos;
+            break;
+        }
+
+        if(grenadePosition[position] < grenadeMaxPosition[position] - 1)
+        {
+            localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
+            grenadePosition[position] += 1;
+            cooldownGrenade[position] = 0.7f;
+            localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Activating");
+        }
+        else
+        {
+            if(reversePos[position] == currentPosition)
             {
-                grenadePos[grenadePosition].GetComponent<Animator>().Play("Deactivating");
-                cooldownGrenade = 0.5f;
-                grenadePosition -= 1;
-                grenadePos[grenadePosition].GetComponent<Animator>().Play("Activating");
+                if(currentPosition == 0 || currentPosition == 1) reverseGrenadePosition[position] = reverseGrenadeTopLeftPos.Count - 1;
+                else if(currentPosition == 2 || currentPosition == 3) reverseGrenadePosition[position] = reverseGrenadeBottomLeftPos.Count - 1;
+                Debug.Log("REVERSE");
+                isReverse[position] = true;
+                isLaunching[position] = false;
+                cooldownGrenade[position] = 0.7f;
+                reverseCooldownGrenade[position] = 0.5f;
+                localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
+                switch(position)
+                {
+                    case 0 :
+                        reverseGrenadeTopLeftPos[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Activating");
+                    break;
+                    case 1 :
+                        reverseGrenadeTopRightPos[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Activating");
+                    break;
+                    case 2 :
+                        reverseGrenadeBottomLeftPos[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Activating");
+                    break;
+                    case 3 :
+                        reverseGrenadeBottomRightPos[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Activating");
+                    break;
+                }
+                grenadePosition[position] = 0;
             }
             else
             {
-                grenadePosition = 0;
-                grenadePos[grenadePosition].GetComponent<Animator>().Play("Deactivating");
-                cooldownGrenade = 0.7f;
-                isLaunching = false;
-                isReverse = false;
+                localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
+                Debug.Log("BOUM");
+                //grenadePosition[position] = 0;
+                cooldownGrenade[position] = 0.7f;
+                isLaunching[position] = false;
             }
         }
+    }
+
+    private void ReverseGrenade(int position)
+    {
+        List<GameObject> localGrenade = new List<GameObject>();
+        switch(position)
+        {
+            case 0:
+                localGrenade = reverseGrenadeTopLeftPos;
+            break;
+            case 1:
+                localGrenade = reverseGrenadeTopRightPos;
+            break;
+            case 2:
+                localGrenade = reverseGrenadeBottomLeftPos;
+            break;
+            case 3:
+                localGrenade = reverseGrenadeBottomRightPos;
+            break;
+        }
+
+        if(reverseGrenadePosition[position] > 0)
+        {
+            localGrenade[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
+            reverseGrenadePosition[position] -= 1;
+            localGrenade[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Activating");
+        }
+        else
+        {
+            localGrenade[reverseGrenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
+            isReverse[position] = false;
+        }
+        reverseCooldownGrenade[position] = 0.5f;
     }
 
     private IEnumerator Jump()
