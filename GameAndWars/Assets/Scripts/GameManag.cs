@@ -8,7 +8,6 @@ public class GameManag : MonoBehaviour {
     [SerializeField] List<Grenade> _grenades;
     [SerializeField] SpriteLed _explosion;
     [SerializeField] LifeManager _lifeManager;
-    [SerializeField] int _life = 3;
     [SerializeField] float _grenade_timer = 5f;
 
     void Start() {
@@ -36,6 +35,7 @@ public class GameManag : MonoBehaviour {
         Vector2Int position = IntToVector(index);
         if (_playerControls.Position == position) {
             grenade.Reflect();
+            _playerControls.Switch(1.2f);
         }
     }
 
@@ -45,7 +45,6 @@ public class GameManag : MonoBehaviour {
     }
 
     void LoseLife() {
-        --_life;
         _lifeManager?.LoseLife();
     }
 
