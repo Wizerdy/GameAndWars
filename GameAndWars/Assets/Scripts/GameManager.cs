@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -306,6 +307,7 @@ public class GameManager : MonoBehaviour
     public IEnumerator ChangeOpacity(SpriteRenderer spriteRenderer, bool isActive)
     {
         float percentage = 0f;
+        Debug.Log(spriteRenderer.gameObject.name);
         while (percentage <= 1f)
         {
             float delta = Time.deltaTime * 10f * (isActive ? 1 : -1);
@@ -313,22 +315,17 @@ public class GameManager : MonoBehaviour
             percentage = Mathf.Clamp01(percentage);
             spriteRenderer.color = Color.Lerp(deactiveColor, activeColor, percentage);
 
-            yield return null;
+            yield return new WaitForSecondsRealtime(0.001f);
         }
             
     }
 
     public IEnumerator Restart()
     {
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(3f);
-        Time.timeScale = 1;
-        ResetGrenade();
-        lifesAmount = 3;
-        foreach(GameObject life in lifesObjects)
-        {
-            StartCoroutine(ChangeOpacity(life.GetComponent<SpriteRenderer>(), true));
-        }
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
     }
 
     private void PlaySFX(string playName)
