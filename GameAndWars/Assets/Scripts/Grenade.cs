@@ -6,22 +6,24 @@ using UnityEngine.Events;
 public class Grenade : MonoBehaviour {
     [SerializeField] List<SpriteLed> _steps;
     [SerializeField] float _speed = 1f;
+    [SerializeField] Vector2Int _position = Vector2Int.zero;
 
-    [SerializeField] UnityEvent _onExplode;
-    [SerializeField] UnityEvent<Grenade> _onStep;
-    [SerializeField] UnityEvent _onReflect;
-    [SerializeField] UnityEvent _onExplodeBack;
+    [SerializeField, HideInInspector] UnityEvent _onExplode;
+    [SerializeField, HideInInspector] UnityEvent<Grenade> _onStep;
+    [SerializeField, HideInInspector] UnityEvent _onReflect;
+    [SerializeField, HideInInspector] UnityEvent<Grenade> _onExplodeBack;
 
     int _currentStep = -1;
     int _direction = 1;
 
+    public Vector2Int Position => _position;
     public bool Launched => _currentStep != -1;
     public bool LastStep => _currentStep == _steps.Count - 1;
 
     public event UnityAction OnExplode { add => _onExplode.AddListener(value); remove => _onExplode.RemoveListener(value); }
     public event UnityAction<Grenade> OnStep { add => _onStep.AddListener(value); remove => _onStep.RemoveListener(value); }
     public event UnityAction OnReflect { add => _onReflect.AddListener(value); remove => _onReflect.RemoveListener(value); }
-    public event UnityAction OnExplodeBack { add => _onExplodeBack.AddListener(value); remove => _onExplodeBack.RemoveListener(value); }
+    public event UnityAction<Grenade> OnExplodeBack { add => _onExplodeBack.AddListener(value); remove => _onExplodeBack.RemoveListener(value); }
 
     public void Launch() {
         if (_currentStep != -1) { return; }
@@ -41,7 +43,7 @@ public class Grenade : MonoBehaviour {
         if (_currentStep >= _steps.Count) {
             _onExplode?.Invoke();
         } else if (_currentStep <= 0) {
-            _onExplodeBack?.Invoke();
+            _onExplodeBack?.Invoke(this);
         }
         ChangeStep(-1);
     }

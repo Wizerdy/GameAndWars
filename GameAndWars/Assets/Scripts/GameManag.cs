@@ -7,10 +7,12 @@ using UnityEngine.SceneManagement;
 public class GameManag : MonoBehaviour {
     [SerializeField] PlayerControls _playerControls;
     [SerializeField] List<Grenade> _grenades;
+    [SerializeField] List<Enemy> _enemies;
     [SerializeField] SpriteLed _explosion;
     [SerializeField] LifeManager _lifeManager;
     [SerializeField] ScoreManager _scoreManager;
     [SerializeField] MultiSpriteLed _showAllSprites;
+    [SerializeField] List<LoopMultiSpriteLed> _loops;
     [SerializeField] float _timeShowAll = 1f;
     [SerializeField] float _grenade_timer = 5f;
 
@@ -24,6 +26,7 @@ public class GameManag : MonoBehaviour {
             if (_grenades[i] != null) {
                 _grenades[i].OnStep += _Reflect;
                 _grenades[i].OnExplode += _Explosion;
+                _grenades[i].OnExplodeBack += _ExplosionBack;
             }
         }
         _playerControls.CanMove = false;
@@ -37,6 +40,8 @@ public class GameManag : MonoBehaviour {
     private void StartGame() {
         _playerControls.StartGame();
         _scoreManager.StartGame();
+        _enemies.ForEach((Enemy e) => e?.StartGame());
+        _loops.ForEach((LoopMultiSpriteLed l) => l?.StartGame());
         _lifeManager.ShowHealth();
         _routine_LaunchGrenade = StartCoroutine(LaunchTimer());
     }
@@ -56,6 +61,7 @@ public class GameManag : MonoBehaviour {
 
         _launching.Add(nade);
         AudioManager.instance.Play("American");
+        _enemies[nade.Position.x]?.Warn(nade.Position.y);
         StartCoroutine(Tools.Delay(() => { nade?.Launch(); _launching.Remove(nade); AudioManager.instance.Play("Send_Grenade"); }, 1f));
     }
 
@@ -79,6 +85,11 @@ public class GameManag : MonoBehaviour {
         _grenade_timer += 1f;
         AudioManager.instance.Play("Explosion");
         LoseLife();
+    }
+
+    void _ExplosionBack(Grenade nade) {
+        _enemies[nade.Position.x]?.Explode(nade.Position.y);
+        AudioManager.instance.Play("Explosion");
     }
 
     void LoseLife() {
