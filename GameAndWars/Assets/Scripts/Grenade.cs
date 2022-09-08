@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class Grenade : MonoBehaviour {
     [SerializeField] List<SpriteLed> _steps;
-    [SerializeField] float _speed;
+    [SerializeField] float _speed = 1f;
 
     [SerializeField] UnityEvent _onExplode;
     [SerializeField] UnityEvent<Grenade> _onStep;

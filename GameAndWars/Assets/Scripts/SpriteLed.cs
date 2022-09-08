@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SpriteLed : MonoBehaviour {
     [SerializeField] SpriteRenderer _sprite;
+    [SerializeField] Image _image;
     [SerializeField] bool _isActive = false;
-    [SerializeField] float _speed = 10f;
+    [SerializeField] float _speed = 7f;
     [SerializeField] Color _activeColor = Color.black;
-    [SerializeField] Color _deactiveColor = Color.clear;
+    [SerializeField] Color _deactiveColor = new Color(0f, 0f, 0f, 0.04f);
 
     float _percentage = 0f;
 
@@ -17,6 +19,7 @@ public class SpriteLed : MonoBehaviour {
 
     private void Reset() {
         _sprite = GetComponent<SpriteRenderer>();
+        _image = GetComponent<Image>();
     }
 
     public void ActiveFor(float time) {
@@ -34,6 +37,7 @@ public class SpriteLed : MonoBehaviour {
         float delta = Time.deltaTime * _speed * (_isActive ? 1 : -1);
         _percentage += delta;
         _percentage = Mathf.Clamp01(_percentage);
-        _sprite.color = Color.Lerp(_deactiveColor, _activeColor, _percentage);
+        if (_sprite != null) { _sprite.color = Color.Lerp(_deactiveColor, _activeColor, _percentage); }
+        if (_image != null) { _image.color = Color.Lerp(_deactiveColor, _activeColor, _percentage); }
     }
 }
