@@ -6,10 +6,11 @@ using ToolsBoxEngine;
 public class PlayerControls : MonoBehaviour {
     [SerializeField] List<MultiSpriteLed> _playerPositions; // 0 : 0, 0 / 1 : 1, 0 / 2 : 0, 1 : 3 : 1, 1
     [SerializeField, HideInInspector] float _jumpTime = 1f;
-    [SerializeField] float _controlDelayTime = 0.1f;
+    [SerializeField] Vector2 _controlDelayTime = Vector2.one;
     [SerializeField] float _animationTime = 0.3f;
     [SerializeField] bool _canMove = true;
 
+    KeyCode _lastKeyPressed;
     Vector2Int _lastInput = Vector2Int.zero;
     Vector2Int _playerPosition = Vector2Int.zero;
 
@@ -33,25 +34,17 @@ public class PlayerControls : MonoBehaviour {
         if (!_canMove) { return; }
 
         if (Input.GetKeyDown(KeyCode.Z)) {
-            if(_delayCoroutine != null){
-                StopCoroutine(_delayCoroutine);    
-            }
-            _delayCoroutine = StartCoroutine(PushedDelay(KeyCode.Z));
+            ButtonPressed(KeyCode.Z);
         } else if (Input.GetKeyDown(KeyCode.Q)) {
-            if(_delayCoroutine != null){
-                StopCoroutine(_delayCoroutine);    
-            }
-            _delayCoroutine = StartCoroutine(PushedDelay(KeyCode.Q));
+            ButtonPressed(KeyCode.Q);
         } else if (Input.GetKeyDown(KeyCode.D)) {
-            if(_delayCoroutine != null){
-                StopCoroutine(_delayCoroutine);    
-            }
-            _delayCoroutine = StartCoroutine(PushedDelay(KeyCode.D));
+            ButtonPressed(KeyCode.D);
         } else if (Input.GetKeyDown(KeyCode.S)) {
-            if(_delayCoroutine != null){
-                StopCoroutine(_delayCoroutine);    
-            }
-            _delayCoroutine = StartCoroutine(PushedDelay(KeyCode.S));
+            ButtonPressed(KeyCode.S);
+        }
+
+        if (Input.GetKeyUp(_lastKeyPressed)) {
+            if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); }
         }
 
         //Vector2Int direction = Vector2Int.FloorToInt(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")));
@@ -76,7 +69,12 @@ public class PlayerControls : MonoBehaviour {
         int index = VectorToInt(_playerPosition);
         _playerPositions[index].Next();
         StartCoroutine(Tools.Delay(() => _playerPositions[index].Next(), _animationTime));
+    }
 
+    private void ButtonPressed(KeyCode key) {
+        if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); }
+        _delayCoroutine = StartCoroutine(PushedDelay(key));
+        _lastKeyPressed = key;
     }
 
     int VectorToInt(Vector2Int position) {
@@ -91,26 +89,24 @@ public class PlayerControls : MonoBehaviour {
         StartCoroutine(Tools.Delay(() => { _jumping = false; ActivePlayerPosition(_playerPosition.Override(0, Axis.Y)); }, _jumpTime));
     }
 
-    private IEnumerator PushedDelay(KeyCode key)
-    {
-        yield return new WaitForSeconds(_controlDelayTime);
-        switch(key)
-        {
+    private IEnumerator PushedDelay(KeyCode key) {
+        yield return new WaitForSeconds(Random.Range(_controlDelayTime.x, _controlDelayTime.y));
+        switch (key) {
             case KeyCode.Z:
                 ActivePlayerPosition(new Vector2Int(0, 1));
-            break;
+                break;
 
             case KeyCode.S:
                 ActivePlayerPosition(new Vector2Int(1, 0));
-            break;
+                break;
 
             case KeyCode.Q:
                 ActivePlayerPosition(new Vector2Int(0, 0));
-            break;
+                break;
 
             case KeyCode.D:
                 ActivePlayerPosition(new Vector2Int(1, 1));
-            break;
+                break;
         }
-    } 
+    }
 }

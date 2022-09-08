@@ -14,6 +14,8 @@ public class GameManag : MonoBehaviour {
     [SerializeField] float _timeShowAll = 1f;
     [SerializeField] float _grenade_timer = 5f;
 
+    Coroutine _routine_LaunchGrenade;
+
     List<Grenade> _launching = new List<Grenade>();
 
     void Start() {
@@ -36,7 +38,7 @@ public class GameManag : MonoBehaviour {
         _playerControls.StartGame();
         _scoreManager.StartGame();
         _lifeManager.ShowHealth();
-        StartCoroutine(LaunchTimer());
+        _routine_LaunchGrenade = StartCoroutine(LaunchTimer());
     }
 
     IEnumerator LaunchTimer() {
@@ -85,7 +87,9 @@ public class GameManag : MonoBehaviour {
     }
 
     void _OnLoseGame() {
-        SceneManager.LoadScene(0);
+        if (_routine_LaunchGrenade != null) { StopCoroutine(_routine_LaunchGrenade); }
+        _playerControls.CanMove = false;
+        StartCoroutine(Tools.Delay(() => SceneManager.LoadScene(0), 2f));
     }
 
     int VectorToInt(Vector2Int position) {
