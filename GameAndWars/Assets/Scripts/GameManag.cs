@@ -28,6 +28,7 @@ public class GameManag : MonoBehaviour {
         _showAllSprites.ShowAll(true);
         _scoreManager.Point("00000");
         StartCoroutine(Tools.Delay(() => _showAllSprites.ShowAll(false), _timeShowAll));
+        StartCoroutine(Tools.Delay(() => _scoreManager.Point(""), _timeShowAll));
         StartCoroutine(Tools.Delay(() => StartGame(), _timeShowAll + _timeShowAll / 2f));
     }
 
@@ -65,11 +66,15 @@ public class GameManag : MonoBehaviour {
             _playerControls.Anim();
             _scoreManager.Point(1);
             AudioManager.instance.Play("Reflect_Grenade");
+            if (_grenade_timer > 0.9f) {
+                _grenade_timer -= 0.1f;
+            }
         }
     }
 
     void _Explosion() {
         _explosion.ActiveFor(1f);
+        _grenade_timer += 1f;
         AudioManager.instance.Play("Explosion");
         LoseLife();
     }
