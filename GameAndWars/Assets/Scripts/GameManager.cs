@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
             cooldownGrenade[random] = 0.7f;
             isLaunching[random] = true;
             localGrenade[grenadePosition[random]].GetComponent<Animator>().Play("Activating");
+            PlaySFX("SendGrenade");
         }
         else
         {
@@ -213,11 +214,13 @@ public class GameManager : MonoBehaviour
                     break;
                 }
                 grenadePosition[position] = 0;
+                PlaySFX("ReflectGrenade");
             }
             else
             {
                 localGrenade[grenadePosition[position]].GetComponent<Animator>().Play("Deactivating");
                 Debug.Log("BOUM");
+                PlaySFX("Explosion");
                 StartCoroutine(ChangeOpacity(lifesObjects[lifesAmount - 1].GetComponent<SpriteRenderer>(), false));
                 lifesAmount--;
 
@@ -326,6 +329,11 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(ChangeOpacity(life.GetComponent<SpriteRenderer>(), true));
         }
+    }
+
+    private void PlaySFX(string playName)
+    {
+        AudioManager.instance.Play(playName);
     }
 
 }
