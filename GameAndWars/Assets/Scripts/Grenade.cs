@@ -15,6 +15,7 @@ public class Grenade : MonoBehaviour {
     int _currentStep = -1;
     int _direction = 1;
 
+    public bool Launched => _currentStep != -1;
     public bool LastStep => _currentStep == _steps.Count - 1;
 
     public event UnityAction OnExplode { add => _onExplode.AddListener(value); remove => _onExplode.RemoveListener(value); }

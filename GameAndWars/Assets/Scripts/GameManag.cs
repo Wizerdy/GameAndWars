@@ -36,9 +36,11 @@ public class GameManag : MonoBehaviour {
     void LaunchGrenade(Grenade nade) {
         if (nade == null) { return; }
         if (_launching.Contains(nade)) { return; }
+        if (nade.Launched) { return; }
 
         _launching.Add(nade);
-        StartCoroutine(Tools.Delay(() => { nade?.Launch(); _launching.Remove(nade); }, 1f));
+        AudioManager.instance.Play("American");
+        StartCoroutine(Tools.Delay(() => { nade?.Launch(); _launching.Remove(nade); AudioManager.instance.Play("Send_Grenade"); }, 1f));
     }
 
     void _Reflect(Grenade grenade) {
@@ -49,11 +51,13 @@ public class GameManag : MonoBehaviour {
             grenade.Reflect();
             _playerControls.Anim();
             _scoreManager.Point(1);
+            AudioManager.instance.Play("Reflect_Grenade");
         }
     }
 
     void _Explosion() {
         _explosion.ActiveFor(1f);
+        AudioManager.instance.Play("Explosion");
         LoseLife();
     }
 
