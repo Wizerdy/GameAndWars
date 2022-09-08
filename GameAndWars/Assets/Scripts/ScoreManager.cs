@@ -18,6 +18,14 @@ public class ScoreManager : MonoBehaviour {
         while (points.Length < 5) {
             points = " " + points;
         }
-        _text.text = points;
+        Point(points);
+    }
+
+    public void Point(string text) {
+        _text.text = text;
+    }
+
+    public void StartGame() {
+        Point(0);
     }
 }

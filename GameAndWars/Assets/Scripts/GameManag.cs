@@ -10,6 +10,8 @@ public class GameManag : MonoBehaviour {
     [SerializeField] SpriteLed _explosion;
     [SerializeField] LifeManager _lifeManager;
     [SerializeField] ScoreManager _scoreManager;
+    [SerializeField] MultiSpriteLed _showAllSprites;
+    [SerializeField] float _timeShowAll = 1f;
     [SerializeField] float _grenade_timer = 5f;
 
     List<Grenade> _launching = new List<Grenade>();
@@ -22,6 +24,17 @@ public class GameManag : MonoBehaviour {
                 _grenades[i].OnExplode += _Explosion;
             }
         }
+        _playerControls.CanMove = false;
+        _showAllSprites.ShowAll(true);
+        _scoreManager.Point("00000");
+        StartCoroutine(Tools.Delay(() => _showAllSprites.ShowAll(false), _timeShowAll));
+        StartCoroutine(Tools.Delay(() => StartGame(), _timeShowAll + _timeShowAll / 2f));
+    }
+
+    private void StartGame() {
+        _playerControls.StartGame();
+        _scoreManager.StartGame();
+        _lifeManager.ShowHealth();
         StartCoroutine(LaunchTimer());
     }
 

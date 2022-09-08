@@ -11,7 +11,7 @@ public class MultiSpriteLed : MonoBehaviour {
     public int Current => _current;
     public bool Active { get => _isActive; set { _sprites[_current].Active = value; _isActive = value; } }
 
-    void Start() {
+    void Awake() {
         for (int i = 0; i < _sprites.Count; i++) {
             _sprites[i].Active = false;
         }
@@ -26,5 +26,11 @@ public class MultiSpriteLed : MonoBehaviour {
         _sprites[_current].Active = false;
         _current = index;
         _sprites[_current].Active = _isActive;
+    }
+
+    public void ShowAll(bool state) {
+        for (int i = 0; i < _sprites.Count; i++) {
+            _sprites[i].Active = state;
+        }
     }
 }

@@ -16,11 +16,17 @@ public class PlayerControls : MonoBehaviour {
     bool _jumping = false;
 
     public Vector2Int Position => _playerPosition;
+    public bool CanMove { get => _canMove; set => _canMove = true; }
 
     private Coroutine _delayCoroutine;
 
     void Start() {
         ActivePlayerPosition(_playerPosition);
+    }
+
+    public void StartGame() {
+        ActivePlayerPosition(_playerPosition);
+        CanMove = true;
     }
 
     void Update() {

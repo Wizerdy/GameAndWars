@@ -28,4 +28,12 @@ public class LifeManager : MonoBehaviour {
             _onLose?.Invoke();
         }
     }
+
+    public void ShowHealth() {
+        for (int i = 0; i < _count; i++) {
+            if (_healthIcons != null) {
+                _healthIcons[i].Active = true;
+            }
+        }
+    }
 }
