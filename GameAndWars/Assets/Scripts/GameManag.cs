@@ -9,6 +9,7 @@ public class GameManag : MonoBehaviour {
     [SerializeField] List<Grenade> _grenades;
     [SerializeField] SpriteLed _explosion;
     [SerializeField] LifeManager _lifeManager;
+    [SerializeField] ScoreManager _scoreManager;
     [SerializeField] float _grenade_timer = 5f;
 
     List<Grenade> _launching = new List<Grenade>();
@@ -47,6 +48,7 @@ public class GameManag : MonoBehaviour {
         if (_playerControls.Position == position) {
             grenade.Reflect();
             _playerControls.Anim();
+            _scoreManager.Point(1);
         }
     }
 
