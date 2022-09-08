@@ -6,7 +6,8 @@ using ToolsBoxEngine;
 public class PlayerControls : MonoBehaviour {
     [SerializeField] List<MultiSpriteLed> _playerPositions; // 0 : 0, 0 / 1 : 1, 0 / 2 : 0, 1 : 3 : 1, 1
     [SerializeField, HideInInspector] float _jumpTime = 1f;
-    [SerializeField] private float delayTime = 0.1f;
+    [SerializeField] float _controlDelayTime = 0.1f;
+    [SerializeField] float _animationTime = 0.3f;
     [SerializeField] bool _canMove = true;
 
     Vector2Int _lastInput = Vector2Int.zero;
@@ -65,10 +66,10 @@ public class PlayerControls : MonoBehaviour {
         _playerPosition = position;
     }
 
-    public void Switch(float time) {
+    public void Anim() {
         int index = VectorToInt(_playerPosition);
         _playerPositions[index].Next();
-        StartCoroutine(Tools.Delay(() => _playerPositions[index].Next(), time));
+        StartCoroutine(Tools.Delay(() => _playerPositions[index].Next(), _animationTime));
 
     }
 
@@ -84,25 +85,9 @@ public class PlayerControls : MonoBehaviour {
         StartCoroutine(Tools.Delay(() => { _jumping = false; ActivePlayerPosition(_playerPosition.Override(0, Axis.Y)); }, _jumpTime));
     }
 
-    /*private bool PushedDelay(KeyCode key)
-    {
-        if(delayTime > 0)
-        {
-            delayTime -= Time.deltaTime;
-            return false;
-        }
-        else 
-        {
-            delayTime = maxDelayTime;
-            return true;
-        }
-        if(Input.GetKeyUp(key))delayTime = maxDelayTime;
-
-    }*/
-
     private IEnumerator PushedDelay(KeyCode key)
     {
-        yield return new WaitForSeconds(delayTime);
+        yield return new WaitForSeconds(_controlDelayTime);
         switch(key)
         {
             case KeyCode.Z:
@@ -110,15 +95,15 @@ public class PlayerControls : MonoBehaviour {
             break;
 
             case KeyCode.S:
-                ActivePlayerPosition(new Vector2Int(0, 0));
+                ActivePlayerPosition(new Vector2Int(1, 0));
             break;
 
             case KeyCode.Q:
-                ActivePlayerPosition(new Vector2Int(1, 1));
+                ActivePlayerPosition(new Vector2Int(0, 0));
             break;
 
             case KeyCode.D:
-                ActivePlayerPosition(new Vector2Int(1, 0));
+                ActivePlayerPosition(new Vector2Int(1, 1));
             break;
         }
     } 

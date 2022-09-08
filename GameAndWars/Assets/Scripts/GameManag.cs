@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ToolsBoxEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManag : MonoBehaviour {
     [SerializeField] PlayerControls _playerControls;
@@ -10,7 +11,10 @@ public class GameManag : MonoBehaviour {
     [SerializeField] LifeManager _lifeManager;
     [SerializeField] float _grenade_timer = 5f;
 
+    List<Grenade> _launching = new List<Grenade>();
+
     void Start() {
+        if (_lifeManager != null) { _lifeManager.OnLose += _OnLoseGame; }
         for (int i = 0; i < _grenades.Count; i++) {
             if (_grenades[i] != null) {
                 _grenades[i].OnStep += _Reflect;
@@ -23,10 +27,17 @@ public class GameManag : MonoBehaviour {
     IEnumerator LaunchTimer() {
         while (true) {
             Grenade nade = _grenades.Random();
-            if (nade != null) { Debug.Log(nade.name); }
-            nade?.Launch();
+            LaunchGrenade(nade);
             yield return new WaitForSeconds(_grenade_timer);
         }
+    }
+
+    void LaunchGrenade(Grenade nade) {
+        if (nade == null) { return; }
+        if (_launching.Contains(nade)) { return; }
+
+        _launching.Add(nade);
+        StartCoroutine(Tools.Delay(() => { nade?.Launch(); _launching.Remove(nade); }, 1f));
     }
 
     void _Reflect(Grenade grenade) {
@@ -35,7 +46,7 @@ public class GameManag : MonoBehaviour {
         Vector2Int position = IntToVector(index);
         if (_playerControls.Position == position) {
             grenade.Reflect();
-            _playerControls.Switch(1.2f);
+            _playerControls.Anim();
         }
     }
 
@@ -45,7 +56,12 @@ public class GameManag : MonoBehaviour {
     }
 
     void LoseLife() {
+        for (int i = 0; i < _grenades.Count; i++) { _grenades[i].ResetMe(); }
         _lifeManager?.LoseLife();
+    }
+
+    void _OnLoseGame() {
+        SceneManager.LoadScene(0);
     }
 
     int VectorToInt(Vector2Int position) {

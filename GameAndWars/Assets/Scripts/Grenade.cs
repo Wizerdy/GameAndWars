@@ -50,6 +50,15 @@ public class Grenade : MonoBehaviour {
         _onReflect?.Invoke();
     }
 
+    public void ResetMe() {
+        _direction = 1;
+        _currentStep = -1;
+        StopAllCoroutines();
+        for (int i = 0; i < _steps.Count; i++) {
+            _steps[i].Active = false;
+        }
+    }
+
     void ChangeStep(int step) {
         if (!(_currentStep >= _steps.Count || _currentStep < 0)) {
             _steps[_currentStep].Active = false;

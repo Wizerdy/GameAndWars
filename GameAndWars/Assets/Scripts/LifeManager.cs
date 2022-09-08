@@ -23,6 +23,9 @@ public class LifeManager : MonoBehaviour {
     public void LoseLife() {
         --_count;
         _healthIcons[_count].Active = false;
-        _onLose?.Invoke();
+        if (_count <= 0) {
+            _count = Mathf.Max(_count, 0);
+            _onLose?.Invoke();
+        }
     }
 }
