@@ -3840,6 +3840,11 @@ MonoBehaviour:
     volume: 0.75
     pitch: 1
     source: {fileID: 0}
+  - name: American
+    clip: {fileID: 8300000, guid: 86f27c56165b8684daf58361b529a7df, type: 3}
+    volume: 0.75
+    pitch: 1
+    source: {fileID: 0}
 --- !u!1 &1763421961
 GameObject:
   m_ObjectHideFlags: 0

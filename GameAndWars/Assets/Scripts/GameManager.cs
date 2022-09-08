@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
 
         //Grenade
         cooldownGrenadeLaunch -= Time.deltaTime;
+        if(cooldownGrenadeLaunch <= .8f && cooldownGrenadeLaunch >= .79f)PlaySFX("American");
         if(cooldownGrenadeLaunch <= 0)
         {
             SendGrenade();
