@@ -34,7 +34,7 @@ public class SwitchScenes : MonoBehaviour {
         }
 
         if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.S)) {
-            StopCoroutine(_routine_InputPressed);
+            if(_routine_InputPressed != null)StopCoroutine(_routine_InputPressed);
         }
 
         //if (Input.GetKeyDown(KeyCode.Q)) {
