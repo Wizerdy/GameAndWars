@@ -89,7 +89,7 @@ public class GameManag : MonoBehaviour {
 
     void _ExplosionBack(Grenade nade) {
         _enemies[nade.Position.x]?.Explode(nade.Position.y);
-        AudioManager.instance.Play("Explosion");
+        AudioManager.instance.Play("ExplodeBack");
     }
 
     void LoseLife() {
