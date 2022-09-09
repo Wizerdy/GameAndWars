@@ -110,7 +110,7 @@ public class GameManag : MonoBehaviour {
     void _OnLoseGame() {
         if (_routine_LaunchGrenade != null) { StopCoroutine(_routine_LaunchGrenade); }
         _playerControls.CanMove = false;
-        StartCoroutine(Tools.Delay(() => SceneManager.LoadScene(0), 2f));
+        StartCoroutine(Tools.Delay(() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex), 2f));
     }
 
     int VectorToInt(Vector2Int position) {

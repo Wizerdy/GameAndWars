@@ -60,6 +60,7 @@ public class PlayerControls : MonoBehaviour {
     }
 
     void ActivePlayerPosition(Vector2Int position) {
+        if (VectorToInt(position) >= _playerPositions.Count) { return; }
         _playerPositions[VectorToInt(_playerPosition)].Active = false;
         _playerPositions[VectorToInt(position)].Active = true;
         _playerPosition = position;
