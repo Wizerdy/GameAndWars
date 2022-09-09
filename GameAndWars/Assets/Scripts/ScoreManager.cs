@@ -15,7 +15,7 @@ public class ScoreManager : MonoBehaviour {
     public void Point(int point) {
         _points += point;
         string points = _points.ToString();
-        while (points.Length < 5) {
+        while (points.Length < 3) {
             points = " " + points;
         }
         Point(points);

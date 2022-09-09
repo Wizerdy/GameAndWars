@@ -12,9 +12,15 @@ public class GameManag : MonoBehaviour {
     [SerializeField] LifeManager _lifeManager;
     [SerializeField] ScoreManager _scoreManager;
     [SerializeField] MultiSpriteLed _showAllSprites;
+    [SerializeField] MultiSpriteLed _disableOnExplode;
     [SerializeField] List<LoopMultiSpriteLed> _loops;
+    [SerializeField] List<ActiveOnGameStart> _activeOnGameStart;
     [SerializeField] float _timeShowAll = 1f;
-    [SerializeField] float _grenade_timer = 5f;
+    [SerializeField] float _grenadeTimer = 5f;
+
+    [Header("Difficulty")]
+    [SerializeField] Vector2 _grenadesBounds = Vector2.one;
+    [SerializeField] Vector2 _lostWinTime = Vector2.one;
 
     Coroutine _routine_LaunchGrenade;
 
@@ -31,7 +37,7 @@ public class GameManag : MonoBehaviour {
         }
         _playerControls.CanMove = false;
         _showAllSprites.ShowAll(true);
-        _scoreManager.Point("00000");
+        _scoreManager.Point("000");
         StartCoroutine(Tools.Delay(() => _showAllSprites.ShowAll(false), _timeShowAll));
         StartCoroutine(Tools.Delay(() => _scoreManager.Point(""), _timeShowAll));
         StartCoroutine(Tools.Delay(() => StartGame(), _timeShowAll + _timeShowAll / 2f));
@@ -42,6 +48,7 @@ public class GameManag : MonoBehaviour {
         _scoreManager.StartGame();
         _enemies.ForEach((Enemy e) => e?.StartGame());
         _loops.ForEach((LoopMultiSpriteLed l) => l?.StartGame());
+        _activeOnGameStart.ForEach((ActiveOnGameStart l) => l?.GameStart());
         _lifeManager.ShowHealth();
         _routine_LaunchGrenade = StartCoroutine(LaunchTimer());
     }
@@ -50,7 +57,7 @@ public class GameManag : MonoBehaviour {
         while (true) {
             Grenade nade = _grenades.Random();
             LaunchGrenade(nade);
-            yield return new WaitForSeconds(_grenade_timer);
+            yield return new WaitForSeconds(_grenadeTimer);
         }
     }
 
@@ -74,22 +81,25 @@ public class GameManag : MonoBehaviour {
             _playerControls.Anim();
             _scoreManager.Point(1);
             AudioManager.instance.Play("Reflect_Grenade");
-            if (_grenade_timer > 0.9f) {
-                _grenade_timer -= 0.1f;
-            }
+
+            _grenadeTimer -= _lostWinTime.x;
+            _grenadeTimer = Mathf.Max(_grenadesBounds.x, _grenadeTimer);
         }
     }
 
     void _Explosion() {
         _explosion.ActiveFor(1f);
-        _grenade_timer += 1f;
+        _disableOnExplode?.ShowAll(false);
+        StartCoroutine(Tools.Delay(() => _disableOnExplode?.ShowAll(true), 1f));
+        _grenadeTimer += _lostWinTime.y;
+        _grenadeTimer = Mathf.Max(_grenadeTimer, _grenadesBounds.y);
         AudioManager.instance.Play("Explosion");
         LoseLife();
     }
 
     void _ExplosionBack(Grenade nade) {
         _enemies[nade.Position.x]?.Explode(nade.Position.y);
-        AudioManager.instance.Play("ExplodeBack");
+        AudioManager.instance.Play("ExplosionBack");
     }
 
     void LoseLife() {
