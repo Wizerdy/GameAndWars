@@ -33,12 +33,12 @@ public class PlayerControls : MonoBehaviour {
     void Update() {
         if (!_canMove) { return; }
 
-        if (Input.GetKeyDown(KeyCode.Z)) {
-            ButtonPressed(KeyCode.Z);
+        if (Input.GetKeyDown(KeyCode.A)) {
+            ButtonPressed(KeyCode.A);
         } else if (Input.GetKeyDown(KeyCode.Q)) {
             ButtonPressed(KeyCode.Q);
-        } else if (Input.GetKeyDown(KeyCode.D)) {
-            ButtonPressed(KeyCode.D);
+        } else if (Input.GetKeyDown(KeyCode.Z)) {
+            ButtonPressed(KeyCode.Z);
         } else if (Input.GetKeyDown(KeyCode.S)) {
             ButtonPressed(KeyCode.S);
         }
@@ -93,7 +93,7 @@ public class PlayerControls : MonoBehaviour {
     private IEnumerator PushedDelay(KeyCode key) {
         yield return new WaitForSeconds(Random.Range(_controlDelayTime.x, _controlDelayTime.y));
         switch (key) {
-            case KeyCode.Z:
+            case KeyCode.A:
                 ActivePlayerPosition(new Vector2Int(0, 1));
                 break;
 
@@ -105,7 +105,7 @@ public class PlayerControls : MonoBehaviour {
                 ActivePlayerPosition(new Vector2Int(0, 0));
                 break;
 
-            case KeyCode.D:
+            case KeyCode.Z:
                 ActivePlayerPosition(new Vector2Int(1, 1));
                 break;
         }

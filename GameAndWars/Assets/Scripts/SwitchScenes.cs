@@ -41,10 +41,10 @@ public class SwitchScenes : MonoBehaviour {
                 ChangeScene(_sceneIndex);
             }
 
-            if (Input.GetKeyDown(KeyCode.Z)) {
+            if (Input.GetKeyDown(KeyCode.A)) {
                 _sceneIndex = 1;
                 _onChangeGame?.Invoke(_sceneIndex);
-            } else if (Input.GetKeyDown(KeyCode.D)) {
+            } else if (Input.GetKeyDown(KeyCode.Z)) {
                 _sceneIndex = 2;
                 _onChangeGame?.Invoke(_sceneIndex);
             }
