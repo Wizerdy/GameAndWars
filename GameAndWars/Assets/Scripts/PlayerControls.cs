@@ -6,6 +6,7 @@ using ToolsBoxEngine;
 public class PlayerControls : MonoBehaviour {
     [SerializeField] List<MultiSpriteLed> _playerPositions; // 0 : 0, 0 / 1 : 1, 0 / 2 : 0, 1 : 3 : 1, 1
     [SerializeField, HideInInspector] float _jumpTime = 1f;
+    [SerializeField] Camera _camera;
     [SerializeField] Vector2 _controlDelayTime = Vector2.one;
     [SerializeField] float _animationTime = 0.3f;
     [SerializeField] bool _canMove = true;
@@ -33,19 +34,23 @@ public class PlayerControls : MonoBehaviour {
     void Update() {
         if (!_canMove) { return; }
 
-        if (Input.GetKeyDown(KeyCode.A)) {
-            ButtonPressed(KeyCode.A);
-        } else if (Input.GetKeyDown(KeyCode.Q)) {
-            ButtonPressed(KeyCode.Q);
-        } else if (Input.GetKeyDown(KeyCode.Z)) {
-            ButtonPressed(KeyCode.Z);
-        } else if (Input.GetKeyDown(KeyCode.S)) {
-            ButtonPressed(KeyCode.S);
-        }
+        #region Keyboard TP
+        //if (Input.GetKeyDown(KeyCode.A)) {
+        //    ButtonPressed(KeyCode.A);
+        //} else if (Input.GetKeyDown(KeyCode.Q)) {
+        //    ButtonPressed(KeyCode.Q);
+        //} else if (Input.GetKeyDown(KeyCode.Z)) {
+        //    ButtonPressed(KeyCode.Z);
+        //} else if (Input.GetKeyDown(KeyCode.S)) {
+        //    ButtonPressed(KeyCode.S);
+        //}
 
-        if (Input.GetKeyUp(_lastKeyPressed)) {
-            if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); }
-        }
+        //if (Input.GetKeyUp(_lastKeyPressed)) {
+        //    if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); }
+        //}
+        #endregion
+
+        #region Keyboard Movements
 
         //Vector2Int direction = Vector2Int.FloorToInt(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")));
 
@@ -57,6 +62,21 @@ public class PlayerControls : MonoBehaviour {
         //}
 
         //_lastInput = direction;
+
+        #endregion
+
+        if (_camera == null) { return; }
+
+        for (int i = 0; i < Input.touchCount; i++) {
+            Touch touch = Input.GetTouch(i);
+            if (touch.phase != TouchPhase.Began) { continue; }
+            Ray touchRay = _camera.ScreenPointToRay(touch.position.Override(0f, Axis.Z));
+            RaycastHit2D hit = Physics2D.GetRayIntersection(touchRay);
+            if (hit.collider != null) {
+                Debug.Log("OIIII " + hit.collider.name);
+                ActivePlayerPosition(new Vector2Int(0, 1));
+            }
+        }
     }
 
     void ActivePlayerPosition(Vector2Int position) {
