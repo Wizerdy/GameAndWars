@@ -9,6 +9,8 @@ public class GameUIManager : MonoBehaviour {
     [SerializeField] GameObject _aText;
     [SerializeField] GameObject _bText;
 
+    int _index = 0;
+
     void Start() {
         SwitchScenes._instance.OnChangeGame += _OnChangeGame;
         _OnChangeGame(SwitchScenes._instance.GameIndex);
@@ -19,6 +21,9 @@ public class GameUIManager : MonoBehaviour {
     }
 
     void _OnChangeGame(int index) {
+        if (index == _index) { return; }
+        AudioManager.instance.Play("Send_Grenade");
+        _index = index;
         switch (index) {
             case 1:
                 _aText.SetActive(true);

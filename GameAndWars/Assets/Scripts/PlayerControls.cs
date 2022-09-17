@@ -53,16 +53,17 @@ public class PlayerControls : MonoBehaviour {
         //if (Input.GetKeyUp(_lastKeyPressed)) {
         //    if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); }
         //}
+
+        //if (Input.GetKeyDown(UPLEFT)) {
+        //    ButtonPressed(UPLEFT);
+        //} else if (Input.GetKeyDown(DOWNLEFT)) {
+        //    ButtonPressed(DOWNLEFT);
+        //} else if (Input.GetKeyDown(UPRIGHT)) {
+        //    ButtonPressed(UPRIGHT);
+        //} else if (Input.GetKeyDown(DOWNRIGHT)) {
+        //    ButtonPressed(DOWNRIGHT);
+        //}
         #endregion
-        if (Input.GetKeyDown(UPLEFT)) {
-            ButtonPressed(UPLEFT);
-        } else if (Input.GetKeyDown(DOWNLEFT)) {
-            ButtonPressed(DOWNLEFT);
-        } else if (Input.GetKeyDown(UPRIGHT)) {
-            ButtonPressed(UPRIGHT);
-        } else if (Input.GetKeyDown(DOWNRIGHT)) {
-            ButtonPressed(DOWNRIGHT);
-        }
 
         #region Keyboard Movements
 
@@ -79,16 +80,21 @@ public class PlayerControls : MonoBehaviour {
 
         #endregion
 
-        if (_camera == null) { return; }
-
         for (int i = 0; i < Input.touchCount; i++) {
             Touch touch = Input.GetTouch(i);
+            //if (touch.phase != TouchPhase.Began) { continue; }
+            //Debug.Log("Touched : " + touch.fingerId);
             if (touch.phase != TouchPhase.Began) { continue; }
-            Ray touchRay = _camera.ScreenPointToRay(touch.position.Override(0f, Axis.Z));
+            Ray touchRay = Camera.main.ScreenPointToRay(touch.position.To3D(0f));
+            Debug.DrawLine(Vector2.zero, Camera.main.ScreenToWorldPoint(touch.position).To2D(), Color.blue, 5f);
+            //Debug.Log(Vector2.zero + " .. " + Camera.main.ScreenToWorldPoint(touch.position).To2D());
             RaycastHit2D hit = Physics2D.GetRayIntersection(touchRay);
             if (hit.collider != null) {
-                Debug.Log("OIIII " + hit.collider.name);
-                ActivePlayerPosition(new Vector2Int(0, 1));
+                Debug.LogWarning("Hitted ! : " + hit.collider.name);
+                TouchCollider touchModule = hit.collider.GetComponent<TouchCollider>();
+                if (touchModule != null) {
+                    ButtonPressed(TouchToKey(touchModule.Touch));
+                }
             }
         }
     }
@@ -122,6 +128,20 @@ public class PlayerControls : MonoBehaviour {
     void Jump() {
         _jumping = true;
         StartCoroutine(Tools.Delay(() => { _jumping = false; ActivePlayerPosition(_playerPosition.Override(0, Axis.Y)); }, _jumpTime));
+    }
+
+    private KeyCode TouchToKey(Touches touch) {
+        switch (touch) {
+            default:
+            case Touches.DOWN_LEFT:
+                return DOWNLEFT;
+            case Touches.UP_LEFT:
+                return UPLEFT;
+            case Touches.DOWN_RIGHT:
+                return DOWNRIGHT;
+            case Touches.UP_RIGHT:
+                return UPRIGHT;
+        }
     }
 
     private IEnumerator PushedDelay(KeyCode key) {
