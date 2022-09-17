@@ -33,27 +33,27 @@ public class SwitchScenes : MonoBehaviour {
     }
 
     void Update() {
-        _inputPressed[0] = Input.GetKey(KeyCode.Q);
-        _inputPressed[1] = Input.GetKey(KeyCode.S);
+        _inputPressed[0] = Input.GetKey(PlayerControls.DOWNLEFT);
+        _inputPressed[1] = Input.GetKey(PlayerControls.DOWNRIGHT);
 
         if (SceneManager.GetActiveScene().buildIndex == 0) { // ON the game
-            if (_inputPressed[0] && _inputPressed[1] && (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.S))) {
+            if (_inputPressed[0] && _inputPressed[1] && (Input.GetKeyDown(PlayerControls.DOWNLEFT) || Input.GetKeyDown(PlayerControls.DOWNRIGHT))) {
                 ChangeScene(_sceneIndex);
             }
 
-            if (Input.GetKeyDown(KeyCode.A)) {
+            if (Input.GetKeyDown(PlayerControls.UPLEFT)) {
                 _sceneIndex = 1;
                 _onChangeGame?.Invoke(_sceneIndex);
-            } else if (Input.GetKeyDown(KeyCode.Z)) {
+            } else if (Input.GetKeyDown(PlayerControls.UPRIGHT)) {
                 _sceneIndex = 2;
                 _onChangeGame?.Invoke(_sceneIndex);
             }
         } else { // OFF the game
-            if (_inputPressed[0] && _inputPressed[1] && (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.S))) {
+            if (_inputPressed[0] && _inputPressed[1] && (Input.GetKeyDown(PlayerControls.DOWNLEFT) || Input.GetKeyDown(PlayerControls.DOWNRIGHT))) {
                 _routine_InputPressed = StartCoroutine(ChangeSceneWithTime(0));
             }
 
-            if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.S)) {
+            if (Input.GetKeyUp(PlayerControls.DOWNLEFT) || Input.GetKeyUp(PlayerControls.DOWNRIGHT)) {
                 if (_routine_InputPressed != null) StopCoroutine(_routine_InputPressed);
             }
         }

@@ -2522,8 +2522,8 @@ MonoBehaviour:
   - {fileID: 155439315}
   _timeShowAll: 2
   _grenadeTimer: 4
-  _grenadesBounds: {x: 0.8, y: 4}
-  _lostWinTime: {x: 0.05, y: 0.5}
+  _grenadesBounds: {x: 0.8, y: 3}
+  _lostWinTime: {x: 0.08, y: 0.5}
 --- !u!4 &675199759
 Transform:
   m_ObjectHideFlags: 0
@@ -6122,7 +6122,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit

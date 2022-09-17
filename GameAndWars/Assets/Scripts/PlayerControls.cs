@@ -4,6 +4,11 @@ using UnityEngine;
 using ToolsBoxEngine;
 
 public class PlayerControls : MonoBehaviour {
+    public const KeyCode UPLEFT = KeyCode.E;
+    public const KeyCode DOWNLEFT = KeyCode.D;
+    public const KeyCode UPRIGHT = KeyCode.O;
+    public const KeyCode DOWNRIGHT = KeyCode.L;
+
     [SerializeField] List<MultiSpriteLed> _playerPositions; // 0 : 0, 0 / 1 : 1, 0 / 2 : 0, 1 : 3 : 1, 1
     [SerializeField, HideInInspector] float _jumpTime = 1f;
     [SerializeField] Vector2 _controlDelayTime = Vector2.one;
@@ -33,14 +38,14 @@ public class PlayerControls : MonoBehaviour {
     void Update() {
         if (!_canMove) { return; }
 
-        if (Input.GetKeyDown(KeyCode.A)) {
-            ButtonPressed(KeyCode.A);
-        } else if (Input.GetKeyDown(KeyCode.Q)) {
-            ButtonPressed(KeyCode.Q);
-        } else if (Input.GetKeyDown(KeyCode.Z)) {
-            ButtonPressed(KeyCode.Z);
-        } else if (Input.GetKeyDown(KeyCode.S)) {
-            ButtonPressed(KeyCode.S);
+        if (Input.GetKeyDown(UPLEFT)) {
+            ButtonPressed(UPLEFT);
+        } else if (Input.GetKeyDown(DOWNLEFT)) {
+            ButtonPressed(DOWNLEFT);
+        } else if (Input.GetKeyDown(UPRIGHT)) {
+            ButtonPressed(UPRIGHT);
+        } else if (Input.GetKeyDown(DOWNRIGHT)) {
+            ButtonPressed(DOWNRIGHT);
         }
 
         if (Input.GetKeyUp(_lastKeyPressed)) {
@@ -93,19 +98,19 @@ public class PlayerControls : MonoBehaviour {
     private IEnumerator PushedDelay(KeyCode key) {
         yield return new WaitForSeconds(Random.Range(_controlDelayTime.x, _controlDelayTime.y));
         switch (key) {
-            case KeyCode.A:
+            case UPLEFT:
                 ActivePlayerPosition(new Vector2Int(0, 1));
                 break;
 
-            case KeyCode.S:
+            case DOWNRIGHT:
                 ActivePlayerPosition(new Vector2Int(1, 0));
                 break;
 
-            case KeyCode.Q:
+            case DOWNLEFT:
                 ActivePlayerPosition(new Vector2Int(0, 0));
                 break;
 
-            case KeyCode.Z:
+            case UPRIGHT:
                 ActivePlayerPosition(new Vector2Int(1, 1));
                 break;
         }
