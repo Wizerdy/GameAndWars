@@ -4,6 +4,11 @@ using UnityEngine;
 using ToolsBoxEngine;
 
 public class PlayerControls : MonoBehaviour {
+    public const KeyCode UPLEFT = KeyCode.E;
+    public const KeyCode DOWNLEFT = KeyCode.D;
+    public const KeyCode UPRIGHT = KeyCode.O;
+    public const KeyCode DOWNRIGHT = KeyCode.L;
+
     [SerializeField] List<MultiSpriteLed> _playerPositions; // 0 : 0, 0 / 1 : 1, 0 / 2 : 0, 1 : 3 : 1, 1
     [SerializeField, HideInInspector] float _jumpTime = 1f;
     [SerializeField] Camera _camera;
@@ -49,6 +54,15 @@ public class PlayerControls : MonoBehaviour {
         //    if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); }
         //}
         #endregion
+        if (Input.GetKeyDown(UPLEFT)) {
+            ButtonPressed(UPLEFT);
+        } else if (Input.GetKeyDown(DOWNLEFT)) {
+            ButtonPressed(DOWNLEFT);
+        } else if (Input.GetKeyDown(UPRIGHT)) {
+            ButtonPressed(UPRIGHT);
+        } else if (Input.GetKeyDown(DOWNRIGHT)) {
+            ButtonPressed(DOWNRIGHT);
+        }
 
         #region Keyboard Movements
 
@@ -113,19 +127,19 @@ public class PlayerControls : MonoBehaviour {
     private IEnumerator PushedDelay(KeyCode key) {
         yield return new WaitForSeconds(Random.Range(_controlDelayTime.x, _controlDelayTime.y));
         switch (key) {
-            case KeyCode.A:
+            case UPLEFT:
                 ActivePlayerPosition(new Vector2Int(0, 1));
                 break;
 
-            case KeyCode.S:
+            case DOWNRIGHT:
                 ActivePlayerPosition(new Vector2Int(1, 0));
                 break;
 
-            case KeyCode.Q:
+            case DOWNLEFT:
                 ActivePlayerPosition(new Vector2Int(0, 0));
                 break;
 
-            case KeyCode.Z:
+            case UPRIGHT:
                 ActivePlayerPosition(new Vector2Int(1, 1));
                 break;
         }
